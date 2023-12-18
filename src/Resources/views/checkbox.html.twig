@@ -1,0 +1,49 @@
+{% extends template_path %}
+
+{% block id %}{{ identifier }}{% endblock %}
+{% block label %}<label>{{ title|raw }}</label>{% endblock %}
+
+{% block field %}
+    <div class="dionysos-field checkbox {{ mode }}">
+        <input type="hidden" name="{{ name }}" value="" />
+
+        {% if options %}
+            {% set num = 0 %}
+
+            {{ mode == 'group' ? '<div class="group-labels">' : '' }}
+
+            {% for k, option in options if option %}
+                {% set id = identifier ~ '-' ~ num %}
+                {% set selected = k in value ? ' checked="checked"' : '' %}
+
+                {% if mode == 'group' %}
+                    <div>
+                        <input type="checkbox" name="{{ name }}[]" id="{{ id }}" value="{{ k }}"{{ selected }} />
+                        <label for="{{ id }}">{{ option|raw }}</label>
+                    </div>
+                {% else %}
+                    <label for="{{ id }}">
+                        {% if mode in ['image', 'image-block'] %}
+                            <img src="{{ option.image }}" alt="" />
+                            <input type="checkbox" name="{{ name }}[]" id="{{ id }}" value="{{ k }}"{{ selected }} />
+                            {{ option.label|raw }}
+                        {% else %}
+                            <input type="checkbox" name="{{ name }}[]" id="{{ id }}" value="{{ k }}"{{ selected }} />
+                            {{ option|raw }}
+                        {% endif %}
+                    </label>
+                {% endif %}
+
+                {% set num = num + 1 %}
+            {% endfor %}
+
+            {{ mode == 'group' ? '</div>' : '' }}
+        {% else %}
+            {{ t_no_options|raw }}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block description %}
+    {{ description|raw }}
+{% endblock %}
